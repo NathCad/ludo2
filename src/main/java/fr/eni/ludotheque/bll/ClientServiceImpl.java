@@ -1,35 +1,44 @@
 package fr.eni.ludotheque.bll;
 
 
+import fr.eni.ludotheque.DTO.ClientDTO;
 import fr.eni.ludotheque.bo.Client;
 import fr.eni.ludotheque.dal.ClientRepository;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+@RequiredArgsConstructor
 @Service
 public class ClientServiceImpl implements ClientService{
+    @NonNull
+   private ClientRepository clientRepository;
 
-   private final ClientRepository clientRepository;
-
-
-   public ClientServiceImpl(ClientRepository clientRepository){
-
-       this.clientRepository = clientRepository;
-   }
 
    @Override
+    public  Client ajouterClient(ClientDTO clientDTO) {
+       Client client = new Client();
+       BeanUtils.copyProperties(clientDTO, client);
+       Client newClient = null;
 
-    public void ajouterClient(Client client){
-       clientRepository.save(client);
+//       try {
+//           newClient = clientRepository.save(client);
+//       }catch(DataIntegrityViolationException ex) {
+//           throw new EmailClientAlreadyExistException();
+//       }
 
-//       if (client.getNom() == null || client.getNom().isBlank()){
-//           throw new IllegalAccessException("Nom obligatoire");
-//       }
-//
-//       if (client.getAdresse()== null){
-//           throw new IllegalAccessException("Adresse obligatoire");
-//       }
-//
-//       return clientRepository.save(client);
+       return clientRepository.save(client);
+   }
+
+
+
+   @Override
+   public List<Client> trouverClientsParNom (String nom){
+
+      return clientRepository.findByNomStartsWith(nom);
    }
 
 

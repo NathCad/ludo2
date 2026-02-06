@@ -20,5 +20,8 @@ public class ClientTest {
         Assertions.assertEquals("ben.stiller@eni.fr", client.getEmail());
         Assertions.assertEquals(adresse, client.getAdresse());
     }
+    public void testTrouverClientParNom(){
+
+    }
 
 }

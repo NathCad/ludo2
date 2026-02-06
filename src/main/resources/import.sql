@@ -5,3 +5,5 @@ insert into genres (no_genre, libelle) values (4, 'Coopératif');
 insert into genres (no_genre, libelle) values (5, 'Jeu de dé');
 insert into genres (no_genre, libelle) values (6, 'Jeu d''enquete');
 delete from jeux;
+
+insert into clients ()
