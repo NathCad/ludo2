@@ -12,9 +12,10 @@ import java.util.Set;
 @RequiredArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+
+@Table(name = "genres")
 public class Genre {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "no_genre")
 	Integer id;
 
