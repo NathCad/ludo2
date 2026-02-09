@@ -1,13 +1,15 @@
 package fr.eni.ludotheque.bll;
 
-import fr.eni.ludotheque.DTO.ClientDTO;
+import fr.eni.ludotheque.bo.Adresse;
 import fr.eni.ludotheque.bo.Client;
-
-import java.util.List;
+import java.util.Set;
 
 public interface ClientService {
+    Client enregistrerNouveauClient(Client client);
 
-   public Client ajouterClient(ClientDTO clientDTO);
+    Set<Client> trouverClientsDontLeNomCommencePar(String bel);
 
-    public List<Client> trouverClientsParNom(String nom);
+    Client mettreAJourClient(Client clientMiseAJour);
+
+    Client mettreAJourAdresse(Integer idClient, Adresse adresseMiseAJour);
 }

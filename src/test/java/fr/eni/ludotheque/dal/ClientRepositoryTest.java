@@ -2,41 +2,72 @@ package fr.eni.ludotheque.dal;
 
 import fr.eni.ludotheque.bo.Adresse;
 import fr.eni.ludotheque.bo.Client;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class ClientRepositoryTest {
-    @Autowired
-    private ClientRepository clientRepository;
+
+    @Autowired private ClientRepository clientRepo;
 
     @Test
-    @DisplayName("test positif de creation d'un client en BD")
-    @Transactional
-    public void testCreationClient() {
-        //Arrange
-        Adresse adresse = new Adresse("rue des Cormorans", "44800", "Saint Herblain");
-        Client client = new Client("Stiller", "Ben", "ben.stiller@eni.fr", adresse);
-        client.setNoTelephone("0101010101");
+    @DisplayName("Trouver id")
+    public void testFindIdClient() {
+        // Arrange
+        String nom = "TOTO";
+        String sciecq = "SCIECQ";
+        Adresse adresse = new Adresse("6 impasse des grands bois", "79000", sciecq);
+        Client client1 = new Client(nom, "Titi", "lilili@jiji.fr", "0633333333", adresse);
 
-        //Act
-        Client clientBD = clientRepository.save(client);
+        // Test sauvegarde
+        // Act
+        clientRepo.save(client1);
+        // Assert
+        Integer idClient = client1.getId();
+        assertNotNull(idClient);
 
-        //Assert
-        assertNotNull(clientBD);
-        assertNotNull(clientBD.getNoClient());
-        assertEquals("Stiller", clientBD.getNom());
-        assertEquals("Ben", clientBD.getPrenom());
-        assertEquals("ben.stiller@eni.fr", clientBD.getEmail());
-        assertEquals("0101010101", clientBD.getNoTelephone());
-        assertNotNull(clientBD.getAdresse().getNoAdresse());
-        assertEquals(adresse, clientBD.getAdresse());
+        // Test récupération
+        // Act
+        Optional<Client> clientOpt = clientRepo.findById(idClient);
+        // Assert
+        assertTrue(clientOpt.isPresent());
+        Client clientLu = clientOpt.get();
+        assertEquals(nom, clientLu.getNom());
+        Adresse adresseLue = clientLu.getAdresse();
+        assertNotNull(adresseLue);
+        assertEquals(sciecq, adresseLue.getVille());
+
+        // Test maj
+        // Arrange
+        String nana = "Nana";
+        clientLu.setNom(nana);
+        String paris = "Paris";
+        adresseLue.setVille(paris);
+        // Act
+        clientRepo.save(clientLu);
+        // assertion
+        Optional<Client> clientMajLuOpt = clientRepo.findById(idClient);
+
+        assertTrue(clientMajLuOpt.isPresent());
+        Client clientMajLu = clientMajLuOpt.get();
+        assertEquals(nana, clientMajLu.getNom());
+        Adresse adresseMajLue = clientMajLu.getAdresse();
+        assertNotNull(adresseMajLue);
+        assertEquals(paris, adresseMajLue.getVille());
+
+        // Test delete
+        // Act
+        clientRepo.delete(client1);
+        clientOpt = clientRepo.findById(idClient);
+        // Assert
+        assertTrue(clientOpt.isEmpty());
     }
-
 }

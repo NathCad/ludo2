@@ -2,48 +2,51 @@ package fr.eni.ludotheque.bo;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
-@Data
+@Entity
+@Setter
+@Getter
 @NoArgsConstructor
 @RequiredArgsConstructor
-@Entity
-@Table(name="JEUX")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Jeu {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="no_jeu")
-	@EqualsAndHashCode.Exclude
-	private Integer noJeu;
-	
-	@Column( length=50, nullable=false)
-	@NonNull
-	private String titre;
-	
-	@Column(length=13, nullable=false, unique=true)
-	@NonNull private String reference;
-	
-	@Column(nullable=true)
-	private int ageMin;
-	
-	@Column( nullable=true)
-	private String description;
+	@Column(name = "no_jeu")
+	Integer id;
 
-	private int duree;
-	
-	@Column(nullable=false)
+	@Column(unique = true, nullable = false, length = 100)
 	@NonNull
-	private Float tarifJour;
-	
+	String titre;
+
+	@Column(unique = true, nullable = false, length = 100)
+	@NonNull
+	String reference;
+
+	@Column(nullable = false)
+	@NonNull
+	Integer age_min;
+
+	@Column(length = 100)
+	String description;
+
+	@Column(nullable = false)
+	@NonNull
+	Integer duree;
+
+	@Column(nullable = false)
+	@NonNull
+	Float tarif_jour;
+
 	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "JEUX_GENRES", 
-		joinColumns = @JoinColumn(name="no_jeu"),
-		inverseJoinColumns = @JoinColumn(name="no_genre"))
-	private List<Genre> genres = new ArrayList<>();
-	
-	public void addGenre(Genre g) {
-		genres.add(g);
-	}
+	@JoinTable(
+			name = "jeux_genres",
+			joinColumns = @JoinColumn(name = "no_jeu"),
+			inverseJoinColumns = @JoinColumn(name = "no_genre"))
+	@NonNull
+	Set<Genre> genres;
 }

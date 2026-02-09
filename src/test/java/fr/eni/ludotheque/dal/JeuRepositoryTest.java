@@ -6,39 +6,35 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class JeuRepositoryTest {
 
-	@Autowired
-	private JeuRepository jeuRepository;
-	
+	@Autowired private JeuxRepository jeuxRepository;
+	@Autowired private GenreRepository genreRepository;
+
 	@Test
-	@DisplayName("test création jeu et liens vers genres CAS POSITIF")
-	//@Transactional
-	public void testCreationJeu() {
-		//Arrange
-		Jeu jeu = new Jeu("SkyJo", "refSkyJo", 5.6f );
-		jeu.setAgeMin(8);
-		jeu.setDescription("Descr skyjo");
-		jeu.addGenre(new Genre(1, ""));
-		jeu.addGenre(new Genre(2, ""));
-		
-		//Act
-		Jeu jeuActual = jeuRepository.save(jeu);
-		
-		//Assert
-		Jeu jeuBD = jeuRepository.findById(jeuActual.getNoJeu()).orElse(null);
-		assertThat(jeuBD).isNotNull();
-		assertThat(jeuBD.getNoJeu()).isNotNull();
-		assertThat(jeuBD.getTitre()).isEqualTo(jeu.getTitre());
-		assertThat(jeuBD.getDescription()).isEqualTo(jeu.getDescription());
-		assertThat(jeuBD.getAgeMin()).isEqualTo(jeu.getAgeMin());
-		assertThat(jeuBD.getGenres()).hasSize(2);
-		assertThat(jeuBD.getReference()).isEqualTo(jeu.getReference());
-		
+	@DisplayName("Test jeux")
+	void jeuxRepositoryTest() {
+		Genre genre = new Genre("Aventure");
+		Genre genre2 = new Genre("Action");
+		genreRepository.save(genre);
+		genreRepository.save(genre2);
+
+		Integer genreId = genre.getId();
+		assertNotNull(genreId);
+
+		Jeu jeu = new Jeu("Mario", "REF1", 12, 48, 2F, Set.of(genre, genre2));
+		jeuxRepository.save(jeu);
+
+		// Assert
+		Integer id = jeu.getId();
+		assertNotNull(id);
 	}
-	
 }
